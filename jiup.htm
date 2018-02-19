@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Javascript, Inheritance</title>
+</head>
+<body>
+    <h1 id="greeting">Hello</h1>
+<script type="text/javascript">
+  var rectange = {
+      length: 8,
+      width: 5,
+      area: function () {
+        return (this.length * this.width);
+      },
+      perimeter: function () {
+        return 2*(this.length + this.width)
+      },
+      diagonal: function (){
+        return Math.sqrt((this.length * this.length) + (this.width * this.width))
+      }
+  };
+  //object case style
+  function RectangeObj(x, y) {
+      this.length = x;
+      this.width = y;
+      this.area = function () {
+        return (this.length * this.width);
+      };
+      this.perimeter = function () {
+        return 2*(length + width)
+      };
+  }
+  //constructor case style
+  function RectangeCon(x, y) {
+    this.length = x;
+    this.width = y;
+  }
+  RectangeCon.prototype = {
+    area: function () {
+      return (this.length * this.width)
+    },
+    perimeter: function () {
+      return 2*(this.length + this.width)
+    },
+    diagonal: function () {
+      return Math.sqrt((this.length * this.length) + (this.width * this.width))
+    }
+  }
+  //keep default constructor case style
+  function RectangeConDef(x, y) {
+    this.length = x;
+    this.width = y;
+  }
+  RectangeConDef.prototype.area = function () {
+    return (this.length * this.width)
+  }
+  RectangeConDef.prototype.perimeter = function () {
+    return 2*(this.length + this.width)
+  }
+  RectangeConDef.prototype.diagonal = function () {
+    return Math.sqrt((this.length * this.length) + (this.width * this.width))
+  }
+  
+  //// extend all property, methods
+  function extendAll(target, source) {
+    for (var propName in source) {
+      target[propName] = source[propName];
+    }
+    return target;
+  }
+  //// extend own property
+  function extendOwnProps(target, source) {
+    for (var propName in source) {
+      if (source.hasOwnProperty(propName)) {
+        target[propName] = source[propName];
+      }
+    }
+    return target
+  }
+  //// extend own properties
+  function extendOwnProperties(target, source) {
+    var hasOwnProperty = Object.prototype.hasOwnProperty;
+    for (var propName in source) {
+      // Invoke hasOwnProperty() with this = source
+      if (hasOwnProperty.call(source, propName)) {
+        target[propName] = source[propName];
+      }
+    }
+    return target;
+  }
+  //// On ECMAScript 5 engines (or older engines where a shim has been loaded)
+  function extendes5(target, source) {
+    Object.getOwnPropertyNames(source)
+          .forEach(function(propName) {
+            Object.defineProperty(target, propName,
+              Object.getOwnPropertyDescriptor(source, propName));
+          });
+    return target
+  }
+  /*
+  function Box(x, y, z) {
+    RectangeConDef.call(this, x, y);
+    this.height = z;
+  }
+  */
+  /*
+  extendOwnProperties(Box.prototype, RectangeConDef.prototype);
+  Box.prototype.area = function () {
+    return this.heigth * Rectange.prototype.perimeter.call(this) + 2 * Rectange.prototype.area.call(this);
+  }
+  */
+  /*
+  Box.prototype = Object.create(RectangeConDef.prototype);
+  Box.prototype.constructor = Box;
+  Box.prototype.area = function () {
+    return this.heigth * Rectange.prototype.perimeter.call(this) + 2 * Rectange.prototype.area.call(this);
+  };
+  */
+  /*
+  function inherits(SubC, SuperC) {
+      var subProto = Object.create(SuperC.prototype);
+      // At the very least, we keep the "constructor" property
+      // At most, we keep additions that have already been made
+      extendOwnProperties(subProto, SubC.prototype);
+      SubC.prototype = subProto;
+  };
+  */
+  /*
+  Box.prototype.area = function () {
+    this.heigth * Rectange.prototype.perimeter.call(this) + 2 * Rectange.prototype.area.call(this);
+  };
+  inherits(Box, RectangeConDef);
+  */
+  function inherits(SubC, SuperC) {
+    SubC._super = SuperC.prototype;
+  }
+  function Box(x, y, z) {
+    Box._super.constructor.call(this, x, y);
+    this.height = z;
+  }
+  Box.prototype.area = function () {
+    return this.height * Box._super.perimeter.call(this) + 2 * Box._super.area.call(this);
+  }
+  inherits(Box, RectangeConDef);
+
+</script>
+</body>
+</html>
